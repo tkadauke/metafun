@@ -6,4 +6,6 @@ module Metafun
   end
 end
 
-Object.send :include, Metafun::Eigenclass
+class Object
+  include Metafun::Eigenclass
+end

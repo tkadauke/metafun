@@ -105,6 +105,10 @@ module Metafun
   end
 end
 
+class Object
+  include Metafun::Annotations
+end
+
 if __FILE__ == $0
   class Object
     include Metafun::Aliasing

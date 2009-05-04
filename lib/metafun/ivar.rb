@@ -30,4 +30,6 @@ module Metafun
   end
 end
 
-Object.send :include, Metafun::Ivar
+class Object
+  include Metafun::Ivar
+end

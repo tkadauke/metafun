@@ -3,7 +3,16 @@ require File.dirname(__FILE__) + '/eigenclass'
 
 module Metafun
   module Concern
+    def self.included(base)
+      base.extend ClassMethods
+      base.send :include, InstanceMethods
+    end
+    
     module ClassMethods
+      
+    end
+    
+    module InstanceMethods
       def concern(name, &block)
         ivar[name] ||= begin
           klass = Class.new do
@@ -49,7 +58,9 @@ module Metafun
   end
 end
 
-Module.send :include, Metafun::Concern::ClassMethods
+class Module
+  include Metafun::Concern
+end
 
 if __FILE__ == $0
   module Mod

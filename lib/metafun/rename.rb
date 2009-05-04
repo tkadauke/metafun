@@ -1,15 +1,28 @@
 module Metafun
-  module RenameMethod
-    def rename_method(old_name, new_name)
-      alias_method new_name, old_name
-      undef_method old_name
+  module Rename
+    module ClassMethods
+
     end
 
-    def rename_method!(old_name, new_name)
-      alias_method new_name, old_name
-      remove_method old_name
+    module InstanceMethods
+      def rename_method(old_name, new_name)
+        alias_method new_name, old_name
+        undef_method old_name
+      end
+
+      def rename_method!(old_name, new_name)
+        alias_method new_name, old_name
+        remove_method old_name
+      end
+    end
+
+    def self.included(receiver)
+      receiver.extend         ClassMethods
+      receiver.send :include, InstanceMethods
     end
   end
 end
 
-Module.send :include, Metafun::RenameMethod
+class Module
+  include Metafun::Rename
+end

@@ -61,16 +61,22 @@ module Metafun
 end
 
 class Object
-  include Metafun::Aliasing
-  include Metafun::Annotations
   include Metafun::AutoAnnotations
-  
-  define_auto_annotation :fucko, :definition => :report, :execution => :fail
-  
-  fucko 'ugly'
-  def hello
-    puts "this sucks"
-  end
 end
 
-Object.new.hello
+if __FILE__ == $0
+  class Object
+    include Metafun::Aliasing
+    include Metafun::Annotations
+    include Metafun::AutoAnnotations
+  
+    define_auto_annotation :fucko, :definition => :report, :execution => :fail
+  
+    fucko 'ugly'
+    def hello
+      puts "this sucks"
+    end
+  end
+
+  Object.new.hello
+end
