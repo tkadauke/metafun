@@ -1,53 +1,55 @@
 require File.dirname(__FILE__) + '/ivar'
 require File.dirname(__FILE__) + '/eigenclass'
 
-module Concern
-  module ClassMethods
-    def concern(name, &block)
-      ivar[name] ||= begin
-        klass = Class.new do
-          instance_methods.each { |m| undef_method m unless m =~ /^__/ }
+module Metafun
+  module Concern
+    module ClassMethods
+      def concern(name, &block)
+        ivar[name] ||= begin
+          klass = Class.new do
+            instance_methods.each { |m| undef_method m unless m =~ /^__/ }
       
-          attr_reader :object
+            attr_reader :object
       
-          def initialize(object)
-            @object = object
-          end
-      
-          def method_missing(method, *args, &block)
-            if @object.respond_to?(method)
-              @object.send(method, *args, &block)
-            else
-              super
+            def initialize(object)
+              @object = object
             end
+      
+            def method_missing(method, *args, &block)
+              if @object.respond_to?(method)
+                @object.send(method, *args, &block)
+              else
+                super
+              end
+            end
+      
+            eigenclass.send :public, :include
+          end
+    
+          define_method name do
+            ivar[name] ||= klass.new(self)
+          end
+    
+          eigenclass.send :define_method, name do
+            klass
+          end
+    
+          klass.eigenclass.send :define_method, :name do
+            name.to_s
           end
       
-          eigenclass.send :public, :include
-        end
-    
-        define_method name do
-          ivar[name] ||= klass.new(self)
-        end
-    
-        eigenclass.send :define_method, name do
           klass
         end
     
-        klass.eigenclass.send :define_method, :name do
-          name.to_s
+        ivar[name].class_eval do
+          yield klass
         end
-      
-        klass
-      end
-    
-      ivar[name].class_eval do
-        yield klass
       end
     end
   end
 end
 
-Module.send :include, Concern::ClassMethods
+Module.send :include, Metafun::Concern::ClassMethods
 
 if __FILE__ == $0
   module Mod

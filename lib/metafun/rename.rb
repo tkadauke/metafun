@@ -1,16 +1,18 @@
-module RenameMethod
-  def rename_method(old_name, new_name)
-    alias_method new_name, old_name
-    undef_method old_name
-  end
+module Metafun
+  module RenameMethod
+    def rename_method(old_name, new_name)
+      alias_method new_name, old_name
+      undef_method old_name
+    end
 
-  def rename_method!(old_name, new_name)
-    alias_method new_name, old_name
-    remove_method old_name
+    def rename_method!(old_name, new_name)
+      alias_method new_name, old_name
+      remove_method old_name
+    end
   end
 end
 
-Module.send :include, RenameMethod
+Module.send :include, Metafun::RenameMethod
 
 if __FILE__ == $0
   require File.dirname(__FILE__) + '/eigenclass'
