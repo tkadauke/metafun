@@ -45,4 +45,14 @@ class IvarTest < Test::Unit::TestCase
     o = Object.new
     assert o.private_methods.include?('ivar')
   end
+  
+  def test_should_allow_for_easy_interface
+    o = Object.new
+    
+    assert_nil o.instance_variable_get(:"@x")
+    o.instance_eval do
+      ivar[:x] = 10
+    end
+    assert_equal 10, o.instance_variable_get(:"@x")
+  end
 end

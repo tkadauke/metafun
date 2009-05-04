@@ -1,6 +1,7 @@
 require "test/unit"
 
 require File.dirname(__FILE__) + '/../lib/metafun/rename'
+require File.dirname(__FILE__) + '/../lib/metafun/eigenclass'
 
 class RenameTest < Test::Unit::TestCase
   def setup
@@ -47,5 +48,19 @@ class RenameTest < Test::Unit::TestCase
     end
     assert   TestClass.instance_methods.include?('inspect') # still there
     assert   TestClass.instance_methods.include?('instecp')
+  end
+  
+  def test_should_rename_singleton_method
+    TestClass.class_eval do
+      def self.foo
+        some_method
+      end
+    end
+    
+    assert   TestClass.eigenclass.instance_methods.include?('foo')
+    assert ! TestClass.eigenclass.instance_methods.include?('bar')
+    TestClass.eigenclass.rename_method! :foo, :bar
+    assert ! TestClass.eigenclass.instance_methods.include?('foo')
+    assert   TestClass.eigenclass.instance_methods.include?('bar')
   end
 end
