@@ -9,7 +9,8 @@ module Metafun
       def before_method(method_name, token = nil, &block)
         token ||= rand(100000)
         define_method "#{method_name}_with_#{token}" do |*args|
-          raise ArgumentError, "wrong number of arguments (#{args.size} for #{arity})" if args.size != self.method("#{method_name}_without_#{token}").arity
+          arity = self.method("#{method_name}_without_#{token}").arity
+          raise ArgumentError, "wrong number of arguments (#{args.size} for #{arity})" if args.size != arity
           block.bind(self).call(*args)
           send("#{method_name}_without_#{token}", *args)
         end
@@ -20,7 +21,8 @@ module Metafun
       def after_method(method_name, token = nil, &block)
         token ||= rand(100000)
         define_method "#{method_name}_with_#{token}" do |*args|
-          raise ArgumentError, "wrong number of arguments (#{args.size} for #{arity})" if args.size != self.method("#{method_name}_without_#{token}").arity
+          arity = self.method("#{method_name}_without_#{token}").arity
+          raise ArgumentError, "wrong number of arguments (#{args.size} for #{arity})" if args.size != arity
           send("#{method_name}_without_#{token}", *args)
           block.bind(self).call(*args)
         end
@@ -31,7 +33,8 @@ module Metafun
       def around_method(method_name, token = nil, &block)
         token ||= rand(100000)
         define_method "#{method_name}_with_#{token}" do |*args|
-          raise ArgumentError, "wrong number of arguments (#{args.size} for #{arity})" if args.size != self.method("#{method_name}_without_#{token}").arity
+          arity = self.method("#{method_name}_without_#{token}").arity
+          raise ArgumentError, "wrong number of arguments (#{args.size} for #{arity})" if args.size != arity
           method_name_block = lambda do |*args|
             send("#{method_name}_without_#{token}", *args)
           end

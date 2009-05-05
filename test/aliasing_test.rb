@@ -70,9 +70,10 @@ class AliasingTest < Test::Unit::TestCase
     end
 
     obj = TestClass.new
-    obj.expects(:some_method).with(10)
-    obj.expects(:some_other_method).with(10)
-    obj.bar(10)
+    
+    assert_raise ArgumentError do
+      obj.bar
+    end
   end
   
   def test_should_use_token_if_supplied

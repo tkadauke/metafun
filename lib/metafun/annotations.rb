@@ -7,7 +7,6 @@ module Metafun
       def define_annotation(name, &block)
         self.class_eval %{
           def self.#{name}(*params, &block)
-            puts "annot: #{name}"
             annotate_method(:#{name}, params, &block)
           end
         }, __FILE__
@@ -114,29 +113,30 @@ if __FILE__ == $0
     include Metafun::Aliasing
     include Metafun::Annotations
   
-    define_annotation :logged do |method, message, expiry|
-      p message
+    define_annotation :logged do |method, message|
       around_method method do |block, *args|
-        puts "entering #{method}: #{message} (#{expiry})"
+        puts "entering #{method}: #{message}"
         result = block.call(*args)
-        puts "exiting #{method}: #{message} (#{expiry})"
+        puts "exiting #{method}: #{message}"
         result
       end
     end
   
-    logged "this is a log", 10 do
-      def hello
-        puts "yeah"
-      end
-  
-      def world
-        puts "foo"
-      end
-    end
-    
     define_annotation :dont do |method|
       puts "removing #{method}"
       remove_method method
+    end
+
+    logged "this is a log" do
+      logged "oeoeo"
+      def hello
+        puts "yeah"
+      end
+      
+      logged "bla"
+      def world
+        puts "foo"
+      end
     end
     
     dont

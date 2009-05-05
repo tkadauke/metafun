@@ -66,13 +66,9 @@ end
 
 if __FILE__ == $0
   class Object
-    include Metafun::Aliasing
-    include Metafun::Annotations
-    include Metafun::AutoAnnotations
+    define_auto_annotation :deprecato, :definition => :report, :execution => :fail
   
-    define_auto_annotation :fucko, :definition => :report, :execution => :fail
-  
-    fucko 'ugly'
+    deprecato 'ugly'
     def hello
       puts "this sucks"
     end
