@@ -1,0 +1,4 @@
+= imedo_deploy
+
+Author::    imedo GmbH
+Copyright:: Copyright (c) 2008 imedo GmbH

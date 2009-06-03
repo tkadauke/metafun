@@ -5,11 +5,7 @@ module Metafun
   module Annotations
     module ClassMethods
       def define_annotation(name, &block)
-        self.class_eval %{
-          def self.#{name}(*params, &block)
-            annotate_method(:#{name}, params, &block)
-          end
-        }, __FILE__
+        self.class_eval %{ def self.#{name}(*params, &block) \n annotate_method(:#{name}, params, &block) \n end }, __FILE__
       
         self.eigenclass.send :define_method, :"method_added_with_#{name}" do |method_name|
           return if @aliasing
@@ -106,52 +102,4 @@ end
 
 class Object
   include Metafun::Annotations
-end
-
-if __FILE__ == $0
-  class Object
-    include Metafun::Aliasing
-    include Metafun::Annotations
-  
-    define_annotation :logged do |method, message|
-      around_method method do |block, *args|
-        puts "entering #{method}: #{message}"
-        result = block.call(*args)
-        puts "exiting #{method}: #{message}"
-        result
-      end
-    end
-  
-    define_annotation :dont do |method|
-      puts "removing #{method}"
-      remove_method method
-    end
-
-    logged "this is a log" do
-      logged "oeoeo"
-      def hello
-        puts "yeah"
-      end
-      
-      logged "bla"
-      def world
-        puts "foo"
-      end
-    end
-    
-    dont
-    def whaddup
-      puts "whaddup"
-    end
-    
-    def yeah
-      puts "yo"
-    end
-  end
-
-  o = Object.new
-  o.hello
-  o.world
-  o.yeah
-  o.whaddup
 end
