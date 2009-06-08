@@ -1,5 +1,7 @@
 require File.dirname(__FILE__) + '/ivar'
 require File.dirname(__FILE__) + '/eigenclass'
+require 'rubygems'
+require 'activesupport'
 
 module Metafun
   module Concern
@@ -15,11 +17,10 @@ module Metafun
     module InstanceMethods
       def concern(name, &block)
         ivar[name] ||= begin
-          klass = Class.new do
-            instance_methods.each { |m| undef_method m unless m =~ /^__/ }
-      
-            attr_reader :object
-      
+          klass = Class.new
+          klass.class_eval do
+            instance_methods.each { |m| undef_method m unless m =~ /^__/ || m == 'instance_eval' }
+            
             def initialize(object)
               @object = object
             end
@@ -31,7 +32,7 @@ module Metafun
                 super
               end
             end
-      
+            
             eigenclass.send :public, :include
           end
     
@@ -50,8 +51,9 @@ module Metafun
           klass
         end
     
-        ivar[name].class_eval do
-          yield klass
+        ivar[name].class_eval &block
+        class_eval do
+          yield
         end
       end
     end
@@ -74,12 +76,12 @@ if __FILE__ == $0
       thing.other_concerned_method
     end
   
-    concern :thing do |thing|
+    concern :thing do
       def concerned_method
         some_method
       end
     
-      def thing.concerned_singleton
+      def self.concerned_singleton
         puts 'singleton'
       end
     
@@ -99,14 +101,14 @@ if __FILE__ == $0
       end
     end
   
-    concern :thing do |thing|
+    concern :thing do
       def sub
         @num -= 1
       end
     end
   
-    concern :another do |klass|
-      klass.include Mod
+    concern :another do
+      include Mod
     end
   end
 
@@ -123,6 +125,13 @@ if __FILE__ == $0
   puts s.thing.add
   puts s.thing.add
   puts s.thing.sub
-  p s.thing.object == s
+  s.inner_method
+  def s.inner_method
+    puts 'bla'
+  end
+  s.inner_method
+  s.thing.inner.inner_method
   s.another.oeoeoe
+  puts "---"
+  p s
 end
