@@ -5,7 +5,7 @@ require File.dirname(__FILE__) + '/selfclass'
 
 module Metafun
   module Aliasing
-    module ClassMethods
+    module InstanceMethods
       def before_method(method_name, token = nil, &block)
         token ||= rand(100000)
         define_method "#{method_name}_with_#{token}" do |*args|
@@ -47,11 +47,11 @@ module Metafun
     end
   
     def self.included(receiver)
-      receiver.extend         ClassMethods
+      receiver.send :include, InstanceMethods
     end
   end
 end
 
-class Object
+class Module
   include Metafun::Aliasing
 end
