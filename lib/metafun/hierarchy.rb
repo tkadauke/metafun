@@ -19,11 +19,6 @@ module Metafun
         def supereigenclasses
           eigenclass_hierarchy[1..-1]
         end
-
-        # oe?
-        # def reachable_modules
-        #   self.extended_modules
-        # end
       end
       
       def self.included(base)
